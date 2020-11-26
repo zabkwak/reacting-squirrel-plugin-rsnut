@@ -1,0 +1,9 @@
+/node_modules
+/dist
+/index.js
+
+/plugin*
+/builder*
+
+/__tests__/app/~rs
+/__tests__/public
