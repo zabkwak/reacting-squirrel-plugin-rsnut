@@ -101,7 +101,7 @@ export default class RSNut extends Plugin {
 					break;
 				case 'OPTIONAL':
 					if (socket.getSession().getUser()) {
-						api.sign(socket, r, data);
+						await api.sign(socket, r, data);
 					}
 					break;
 			}
