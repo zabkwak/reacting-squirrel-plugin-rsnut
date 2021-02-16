@@ -19,7 +19,7 @@ interface IApi {
 	sign?: <S extends Session>(socket: Socket<S>, builder: Builder, data: Partial<ISocketData>) => Promise<void>;
 	transformResponse?: <T>(data: DataResponse & T) => any;
 	handleResponse?: <S extends Session, T>(socket: Socket<S>, method: HttpMethod, endpoint: string, input: Partial<ISocketData>, response: DataResponse & T) => Promise<void>;
-	modifyBuilder?: (builder: Builder, data: Partial<ISocketData>) => void;
+	modifyBuilder?: <S extends Session>(socket: Socket<S>, builder: Builder, data: Partial<ISocketData>) => void;
 	getBroadcastFilter?: <S extends Session>(socket: Socket<S>) => Promise<(socket: Socket<S>) => boolean>;
 }
 
@@ -106,7 +106,7 @@ export default class RSNut extends Plugin {
 					break;
 			}
 			if (typeof api.modifyBuilder === 'function') {
-				api.modifyBuilder(r, data);
+				api.modifyBuilder(socket, r, data);
 			}
 			let response = await r.execute();
 			if (typeof api.transformResponse === 'function') {
