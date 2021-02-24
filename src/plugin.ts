@@ -21,6 +21,7 @@ interface IApi {
 	handleResponse?: <S extends Session, T>(socket: Socket<S>, method: HttpMethod, endpoint: string, input: Partial<ISocketData>, response: DataResponse & T) => Promise<void>;
 	modifyBuilder?: <S extends Session>(socket: Socket<S>, builder: Builder, data: Partial<ISocketData>) => void;
 	getBroadcastFilter?: <S extends Session>(socket: Socket<S>) => Promise<(socket: Socket<S>) => boolean>;
+	onError?: <S extends Session>(socket: Socket<S>, error: any) => void;
 }
 
 interface IDoc {
@@ -108,7 +109,15 @@ export default class RSNut extends Plugin {
 			if (typeof api.modifyBuilder === 'function') {
 				api.modifyBuilder(socket, r, data);
 			}
-			let response = await r.execute();
+			let response: DataResponse;
+			try {
+				response = await r.execute();
+			} catch (e) {
+				if (typeof api.onError === 'function') {
+					api.onError(socket, e);
+				}
+				throw e;
+			}
 			if (typeof api.transformResponse === 'function') {
 				response = api.transformResponse(response);
 			}
