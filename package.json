@@ -1,6 +1,6 @@
 {
 	"name": "reacting-squirrel-plugin-rsnut",
-	"version": "0.2.2",
+	"version": "0.2.3",
 	"description": "",
 	"main": "index.js",
 	"types": "./dist/index.d.ts",
@@ -42,7 +42,7 @@
 		"csstype": "^3.0.7",
 		"mocha": "^8.3.0",
 		"react": "^16.14.0",
-		"reacting-squirrel": "^1.0.0-beta.15",
+		"reacting-squirrel": "^1.0.0-beta.16",
 		"resting-squirrel": "^2.24.0",
 		"resting-squirrel-connector": "^2.1.0",
 		"run-script-os-fix": "^1.0.4",

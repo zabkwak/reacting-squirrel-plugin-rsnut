@@ -46,6 +46,7 @@ interface ISocketData {
 	params: any;
 	broadcast: boolean;
 	headers: any;
+	authType: string;
 	[key: string]: any;
 }
 
