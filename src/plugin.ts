@@ -46,6 +46,7 @@ interface ISocketData {
 	params: any;
 	broadcast: boolean;
 	headers: any;
+	[key: string]: any;
 }
 
 export interface IOptions {

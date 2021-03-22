@@ -18,6 +18,8 @@ export default class RequestBuilder<A = {}, P = {}, H = {}> {
 
 	private _headers: H;
 
+	private _data: { [key: string]: any };
+
 	private _socketRequest: SocketRequest;
 
 	private _timeout: number;
@@ -28,7 +30,7 @@ export default class RequestBuilder<A = {}, P = {}, H = {}> {
 
 	private _onProgress: (progress: number) => void;
 
-	constructor(apiName: string , socketRequest?: SocketRequest | SocketComponent<any, any, any>) {
+	constructor(apiName: string, socketRequest?: SocketRequest | SocketComponent<any, any, any>) {
 		if (socketRequest instanceof SocketComponent) {
 			// @ts-ignore
 			socketRequest = socketRequest._socketRequest;
@@ -145,6 +147,17 @@ export default class RequestBuilder<A = {}, P = {}, H = {}> {
 	}
 
 	/**
+	 * Sets the additional data to the socket request. This data aren't sent to the API automatically.
+	 *
+	 * @param data
+	 * @returns 
+	 */
+	public data(data: { [key: string]: any }): this {
+		this._data = data;
+		return this;
+	}
+
+	/**
 	 * Sets the authorization type of the request.
 	 *
 	 * @param type
@@ -186,7 +199,7 @@ export default class RequestBuilder<A = {}, P = {}, H = {}> {
 	 * Builds the params for the `SocketRequest.execute` method.
 	 */
 	// tslint:disable-next-line: max-line-length
-	public build(): [string, { args?: A, params?: P, headers?: H, broadcast?: boolean, authType?: string }, number, (progress: number) => void] {
+	public build(): [string, { args?: A, params?: P, headers?: H, broadcast?: boolean, authType?: string, [key: string]: any }, number, (progress: number) => void] {
 		return [
 			`${this._apiName}.${this._method} ${this._version !== undefined ? `/${this._version}` : ''}${this._endpoint}`,
 			{
@@ -195,6 +208,7 @@ export default class RequestBuilder<A = {}, P = {}, H = {}> {
 				params: this._params,
 				authType: this._authType,
 				headers: this._headers,
+				...this._data,
 			},
 			this._timeout,
 			this._onProgress,
