@@ -96,9 +96,9 @@ export default class RSNut extends Plugin {
 			const [m, endpoint] = key.split(' ');
 			const [, method] = m.split('.') as [void, HttpMethod];
 			const r = this._createApiRequest(api.name, method.toLowerCase() as any, endpoint)
-				.setParams(params)
-				.setArguments(args)
-				.setHeaders(headers);
+				.params(params)
+				.args(args)
+				.headers(headers);
 			switch (doc.auth) {
 				case 'REQUIRED':
 					if (!socket.getSession().getUser()) {
@@ -142,7 +142,7 @@ export default class RSNut extends Plugin {
 	}
 
 	private _createApiRequest(name: string, method: 'get' | 'post' | 'put' | 'delete', endpoint: string): Builder {
-		const Api = this._apis[name];
+		const Api = this._apis[name].v(null);
 		const r = new Api.Request();
 		return r[method](endpoint);
 	}
