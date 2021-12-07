@@ -85,6 +85,10 @@ export default class RSNut extends Plugin {
 		return 'RS Nut';
 	}
 
+	public getConnector(key: string): ApiWrapper {
+		return this._apis[key];
+	}
+
 	private _registerSocketEvent(server: Server, api: IApi, endpoint: string, doc: IDoc): void {
 		const key = `${api.name}.${endpoint}`;
 		server.registerSocketEvent(key, async (socket, data: Partial<ISocketData> = {}) => {
