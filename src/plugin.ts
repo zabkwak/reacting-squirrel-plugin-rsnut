@@ -13,7 +13,7 @@ interface IRSConnectorOptions {
 	logWarning?: boolean;
 }
 
-interface IApi {
+export interface IApi {
 	name: string;
 	connectorOptions: IRSConnectorOptions;
 	sign?: <S extends Session>(socket: Socket<S>, builder: Builder, data: Partial<ISocketData>) => Promise<void>;
