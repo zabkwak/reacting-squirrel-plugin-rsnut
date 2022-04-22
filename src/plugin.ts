@@ -98,7 +98,7 @@ export default class RSNut extends Plugin {
 			const [, method] = m.split('.') as [void, HttpMethod];
 			if (this._options.logging) {
 				// tslint:disable-next-line: no-console
-				console.log(new Date(), `[${this.getName()}]`, '[LOG]', `API: ${api.name} method: ${method} endpoint: ${endpoint} args: ${JSON.stringify(args)} params: json[${JSON.stringify(params).length}]`);
+				console.log(new Date(), `[${this.getName()}]`, '[LOG]', `API: ${api.name} method: ${method} endpoint: ${endpoint} args: ${JSON.stringify(args || {})} params: json[${JSON.stringify(params || {}).length}]`);
 			}
 			const r = this._createApiRequest(api.name, method.toLowerCase() as any, endpoint)
 				.params(params)
