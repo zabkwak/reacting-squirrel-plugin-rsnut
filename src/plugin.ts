@@ -53,13 +53,18 @@ interface ISocketData {
 export interface IOptions {
 	apis: IApi[];
 	logging?: boolean;
+	retries?: number;
 }
 
 export default class RSNut extends Plugin {
 
 	private _options: IOptions;
 
-	private _apis: { [key: string]: ApiWrapper } = {};
+	private _apis: Record<string, ApiWrapper> = {};
+
+	private _retries: Record<string, number> = {};
+
+	private _retryTimeout: number = 5000;
 
 	constructor(options: IOptions) {
 		super();
@@ -72,12 +77,7 @@ export default class RSNut extends Plugin {
 			server.logWarning('RSNut Plugin', 'No apis defined.');
 		}
 		for (const api of apis) {
-			this._apis[api.name] = RSConnector(api.connectorOptions);
-			const docs = await this._apis[api.name].get<IDocsResponse>('/docs');
-			// tslint:disable-next-line: forin
-			for (const endpoint in docs) {
-				this._registerSocketEvent(server, api, endpoint, docs[endpoint]);
-			}
+			await this._registerApi(server, api);
 		}
 		await super.register(server);
 	}
@@ -88,6 +88,39 @@ export default class RSNut extends Plugin {
 
 	public getConnector(key: string): ApiWrapper {
 		return this._apis[key];
+	}
+
+	private async _registerApi(server: Server, api: IApi): Promise<void> {
+		const { retries } = this._options;
+		let docs: IDocsResponse;
+		if (!this._apis[api.name]) {
+			this._apis[api.name] = RSConnector(api.connectorOptions);
+		}
+		if (this._retries[api.name] === undefined) {
+			this._retries[api.name] = 0;
+		}
+		try {
+			docs = await this._apis[api.name].get<IDocsResponse>('/docs');
+		} catch (error) {
+			if (retries && this._retries[api.name] < retries) {
+				this._retries[api.name]++;
+				server.logWarning(
+					this.getName(),
+					`API ${api.name} error`,
+					error,
+					`Retry attempt ${this._retries[api.name]} of ${retries}.`,
+				);
+				server.logWarning(this.getName(), `Retriyng.`);
+				await this._wait(this._retryTimeout);
+				await this._registerApi(server, api);
+				return;
+			}
+			throw error;
+		}
+		// tslint:disable-next-line: forin
+		for (const [endpoint, doc] of Object.entries(docs)) {
+			this._registerSocketEvent(server, api, endpoint, doc);
+		}
 	}
 
 	private _registerSocketEvent(server: Server, api: IApi, endpoint: string, doc: IDoc): void {
@@ -150,5 +183,11 @@ export default class RSNut extends Plugin {
 		const Api = this._apis[name].v(null);
 		const r = new Api.Request();
 		return r[method](endpoint);
+	}
+
+	private _wait(timeout: number): Promise<void> {
+		return new Promise((resolve) => {
+			setTimeout(resolve, timeout);
+		});
 	}
 }

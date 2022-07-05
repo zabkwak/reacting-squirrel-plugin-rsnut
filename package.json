@@ -1,6 +1,6 @@
 {
 	"name": "reacting-squirrel-plugin-rsnut",
-	"version": "0.2.9",
+	"version": "0.3.0",
 	"description": "",
 	"main": "index.js",
 	"types": "./dist/index.d.ts",

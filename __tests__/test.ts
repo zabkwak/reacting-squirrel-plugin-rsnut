@@ -30,7 +30,14 @@ frontend
 					url: 'http://localhost:8081',
 				},
 			},
-		]
+			{
+				name: 'local-error',
+				connectorOptions: {
+					url: 'http://localhost:8082',
+				},
+			},
+		],
+		retries: 1,
 	}));
 
 describe('Servers start', () => {

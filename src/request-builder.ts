@@ -150,7 +150,7 @@ export default class RequestBuilder<A = {}, P = {}, H = {}> {
 	 * Sets the additional data to the socket request. This data aren't sent to the API automatically.
 	 *
 	 * @param data
-	 * @returns 
+	 * @returns
 	 */
 	public data(data: { [key: string]: any }): this {
 		this._data = data;
